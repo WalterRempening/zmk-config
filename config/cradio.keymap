@@ -22,6 +22,17 @@
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
         };
+
+        // Dead key: send Compose + one key; the next key typed completes it.
+        // &dead SQT -> Compose ' -> then e = é, E = É (see ~/.XCompose for n ? ! s)
+        dead: dead_key {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            bindings
+                = <&kp CAPS>
+                , <&macro_param_1to1>, <&kp MACRO_PLACEHOLDER>
+                ;
+        };
     };
 
     conditional_layers {
@@ -38,6 +49,21 @@
             timeout-ms = <50>;
             key-positions = <11 12>;  // S + D = Ctrl+A (tmux prefix)
             bindings = <&kp LC(A)>;
+        };
+        combo_acute {
+            timeout-ms = <50>;
+            key-positions = <2 12>;   // E + D = accent: then vowel → á é í ó ú, n → ñ, ? → ¿, ! → ¡
+            bindings = <&dead SQT>;
+        };
+        combo_umlaut {
+            timeout-ms = <50>;
+            key-positions = <6 16>;   // U + J = umlaut: then vowel → ä ö ü, s → ß
+            bindings = <&dead DQT>;
+        };
+        combo_compose {
+            timeout-ms = <50>;
+            key-positions = <12 13>;  // D + F = Compose key, for any other Compose sequence
+            bindings = <&kp CAPS>;
         };
     };
 
@@ -86,10 +112,11 @@
         //│  !       │  @       │  #       │  $       │  %       │   │  *       │  -       │  =       │  \       │  `       │
             &kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT      &kp ASTRK  &kp MINUS  &kp EQUAL  &kp BSLH   &kp GRAVE
         //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
-        //│          │          │          │          │          │   │  &       │  _       │  +       │  │       │          │
-            &trans     &trans     &trans     &trans     &trans         &kp AMPS   &kp UNDER  &kp PLUS   &kp PIPE   &trans
+        //│          │          │          │          │          │   │  &       │  _       │  +       │  │       │ PRINT    │
+            &trans     &trans     &trans     &trans     &trans         &kp AMPS   &kp UNDER  &kp PLUS   &kp PIPE   &kp PSCRN
         //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
-                                             &trans     &trans         &trans     &trans
+        //                                                                       │ DELETE   │
+                                             &trans     &trans         &trans     &lt 1 DEL
         //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
             >;
         };
